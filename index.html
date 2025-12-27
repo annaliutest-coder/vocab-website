@@ -135,6 +135,12 @@
       background: #dd6b20;
     }
     
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 14px;
+      flex: none;
+    }
+    
     button:disabled {
       background: #cbd5e0;
       cursor: not-allowed;
@@ -260,7 +266,7 @@
       border-radius: 16px;
       padding: 30px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      margin-top: 20px;
+      margin-bottom: 20px;
     }
     
     .settings-panel h2 {
@@ -278,6 +284,55 @@
       color: #2c5282;
       font-size: 14px;
       line-height: 1.6;
+    }
+    
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+      padding: 20px;
+      background: #f7fafc;
+      border-radius: 8px;
+      border: 2px solid #e2e8f0;
+    }
+    
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+    }
+    
+    .checkbox-item:hover {
+      background: #edf2f7;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .checkbox-item.checked {
+      border-color: #667eea;
+      background: #eef2ff;
+    }
+    
+    .checkbox-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      accent-color: #667eea;
+    }
+    
+    .checkbox-item label {
+      cursor: pointer;
+      font-weight: 500;
+      color: #2d3748;
+      user-select: none;
+      flex: 1;
     }
     
     .results::-webkit-scrollbar {
@@ -322,8 +377,62 @@
   <div class="container">
     <header>
       <h1>📚 教材生詞分析助手</h1>
-      <p>Vol.6 Editor - 列出的生詞皆為來學華語B1-B6L1未收錄生詞，自動標示 TBCL 等級</p>
+      <p>Vol.6 Editor - 列出的生詞皆為來學華語B1-B6L1未收錄生詞,自動標示 TBCL 等級</p>
     </header>
+    
+    <!-- 避開生詞清單選擇 -->
+    <div class="settings-panel">
+      <h2>🎯 避開生詞清單設定</h2>
+      
+      <div class="info-box">
+        <strong>💡 說明:</strong><br>
+        請選擇要避開的冊別生詞清單。勾選的冊別生詞將不會顯示在分析結果中。<br>
+        <strong>預設:</strong>全部勾選(B1-B6L1 全部避開)
+      </div>
+      
+      <div class="button-group">
+        <button id="selectAllBtn" class="btn-success btn-small">✅ 全選</button>
+        <button id="deselectAllBtn" class="btn-secondary btn-small">❌ 全不選</button>
+      </div>
+      
+      <div class="checkbox-group" id="bookCheckboxes">
+        <div class="checkbox-item checked" data-book="B1">
+          <input type="checkbox" id="book1" value="B1" checked>
+          <label for="book1">第一冊 (B1)</label>
+        </div>
+        <div class="checkbox-item checked" data-book="B2">
+          <input type="checkbox" id="book2" value="B2" checked>
+          <label for="book2">第二冊 (B2)</label>
+        </div>
+        <div class="checkbox-item checked" data-book="B3">
+          <input type="checkbox" id="book3" value="B3" checked>
+          <label for="book3">第三冊 (B3)</label>
+        </div>
+        <div class="checkbox-item checked" data-book="B4">
+          <input type="checkbox" id="book4" value="B4" checked>
+          <label for="book4">第四冊 (B4)</label>
+        </div>
+        <div class="checkbox-item checked" data-book="B5">
+          <input type="checkbox" id="book5" value="B5" checked>
+          <label for="book5">第五冊 (B5)</label>
+        </div>
+        <div class="checkbox-item checked" data-book="B6L1">
+          <input type="checkbox" id="book6" value="B6L1" checked>
+          <label for="book6">第六冊第一課 (B6L1)</label>
+        </div>
+      </div>
+      
+      <div class="stats" id="excludeStats" style="display: block;">
+        <div class="stats-row">
+          <span class="stats-label">目前避開冊別:</span>
+          <span class="stats-value" id="excludedBooks">B1, B2, B3, B4, B5, B6L1</span>
+        </div>
+        <div class="stats-row">
+          <span class="stats-label">避開詞彙數量:</span>
+          <span class="stats-value" id="excludedCount">載入中...</span>
+        </div>
+      </div>
+    </div>
     
     <div class="main-content">
       <!-- 輸入區域 -->
@@ -334,14 +443,14 @@
           class="input-area" 
           placeholder="請在此貼上要分析的文字...
 
-支援：
+支援:
 • 從 Google Docs 複製
 • 從 PDF 複製
 • 從 Word 複製
 • 從任何文件複製
 
-已內建 B1-B6L1（1,657 個詞彙）作為舊詞
-完整 TBCL 資料庫（14,836 個詞彙，Level 1-7）"></textarea>
+已內建 B1-B6L1(1,657 個詞彙)作為舊詞
+完整 TBCL 資料庫(14,836 個詞彙,Level 1-7)"></textarea>
         
         <div class="button-group">
           <button id="analyzeBtn" class="btn-primary">🔍 開始分析</button>
@@ -372,17 +481,17 @@
       <h2>⚙️ 舊詞管理</h2>
       
       <div class="info-box">
-        <strong>💡 說明：</strong><br>
-        <strong>✅ 已內建：</strong>B1-B6L1（1,657 個詞彙）已預載為舊詞。<br>
-        <strong>新增舊詞：</strong>如需新增更多舊詞（如 B6L2 之後），請在下方輸入。<br>
-        <strong>查看舊詞：</strong>點擊「📋 顯示目前舊詞」查看完整清單。
+        <strong>💡 說明:</strong><br>
+        <strong>✅ 已內建:</strong>B1-B6L1(1,657 個詞彙)已預載為舊詞。<br>
+        <strong>新增舊詞:</strong>如需新增更多舊詞(如 B6L2 之後),請在下方輸入。<br>
+        <strong>查看舊詞:</strong>點擊「📋 顯示目前舊詞」查看完整清單。
       </div>
       
       <textarea 
         id="oldVocabInput" 
         class="input-area" 
         style="min-height: 150px;"
-        placeholder="輸入要新增的舊詞（每行一個，或用逗號分隔）"></textarea>
+        placeholder="輸入要新增的舊詞(每行一個,或用逗號分隔)"></textarea>
       
       <div class="button-group">
         <button id="addOldVocabBtn" class="btn-success">➕ 新增到舊詞清單</button>
@@ -395,15 +504,15 @@
       
       <div class="stats" id="vocabStats" style="display: block;">
         <div class="stats-row">
-          <span class="stats-label">目前舊詞數量：</span>
+          <span class="stats-label">自訂舊詞數量:</span>
           <span class="stats-value" id="vocabCount">載入中...</span>
         </div>
       </div>
     </div>
     
     <footer>
-      <p>© 2025 教材生詞分析助手 | 內建 TBCL 完整資料庫（14,836 個詞彙）</p>
-      <p>支援 Level 1-7 等級標示 | B1-B6L1 預設舊詞（1,657 個）</p>
+      <p>© 2025 教材生詞分析助手 | 內建 TBCL 完整資料庫(14,836 個詞彙)</p>
+      <p>支援 Level 1-7 等級標示 | B1-B6L1 預設舊詞(1,657 個)</p>
     </footer>
   </div>
   
